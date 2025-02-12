@@ -27,12 +27,15 @@ func main() {
 		return
 	}
 
-	text := parser.Extract(html)
-	res, err := openai.Summarize(context.Background(), text, lang)
+	page := parser.Extract(html)
+
+	ctx := context.Background()
+	res, err := openai.Summarize(ctx, page, lang)
 	if err != nil {
 		fmt.Println("Error: summarize text", err)
 		return
 	}
 
-	fmt.Println("Summarized......:\n\n", res)
+	fmt.Println("---- Summary ----\n\n", res)
+	openai.Ask(ctx, page)
 }
