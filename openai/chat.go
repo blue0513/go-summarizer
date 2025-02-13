@@ -37,7 +37,7 @@ func Summarize(ctx context.Context, text string, lang string) (string, error) {
 	return res.Choices[0].Message.Content, nil
 }
 
-func Ask(ctx context.Context, page string) {
+func Ask(ctx context.Context, page string) error {
 	replies := []openai.ChatCompletionMessageParamUnion{
 		openai.SystemMessage(fmt.Sprintf("Answer the following questions about the article\n%s", page)),
 	}
@@ -49,14 +49,14 @@ func Ask(ctx context.Context, page string) {
 
 		input, err := reader.ReadString('\n')
 		if err != nil {
-			panic(err.Error())
+			return fmt.Errorf("failed to read input: %w", err)
 		}
 
 		fmt.Println("---")
 
 		res, err := completion(ctx, input, replies)
 		if err != nil {
-			panic(err.Error())
+			return fmt.Errorf("failed to get completion: %w", err)
 		}
 		replies = append(replies, res)
 
@@ -88,7 +88,7 @@ func completion(
 	}
 
 	if err := stream.Err(); err != nil {
-		return openai.ChatCompletionMessage{}, err
+		return openai.ChatCompletionMessage{}, fmt.Errorf("stream error: %w", err)
 	}
 
 	// After the stream is finished, acc can be used like a ChatCompletion

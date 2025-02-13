@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"log"
 
 	"github.com/blue0513/go-summarizer/openai"
 	"github.com/blue0513/go-summarizer/parser"
@@ -37,5 +38,8 @@ func main() {
 	}
 
 	fmt.Println("---- Summary ----\n\n", res)
-	openai.Ask(ctx, page)
+
+	if err = openai.Ask(ctx, page); err != nil {
+		log.Fatal(err)
+	}
 }
