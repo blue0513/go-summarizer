@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/fatih/color"
 	"github.com/openai/openai-go"
 )
 
@@ -44,15 +45,14 @@ func Ask(ctx context.Context, page string) error {
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		fmt.Println("---")
-		fmt.Println("Ask question:")
+		color.Cyan("---- Ask question ----")
 
 		input, err := reader.ReadString('\n')
 		if err != nil {
 			return fmt.Errorf("failed to read input: %w", err)
 		}
 
-		fmt.Println("---")
+		color.Red("---- Answer ----")
 
 		res, err := completion(ctx, input, replies)
 		if err != nil {
