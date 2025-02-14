@@ -4,10 +4,14 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/blue0513/go-summarizer/openai"
 	"github.com/blue0513/go-summarizer/parser"
 	"github.com/blue0513/go-summarizer/request"
+	"github.com/briandowns/spinner"
+	"github.com/fatih/color"
 )
 
 func main() {
@@ -27,12 +31,23 @@ func main() {
 		return
 	}
 
-	text := parser.Extract(html)
-	res, err := openai.Summarize(context.Background(), text, lang)
+	page := parser.Extract(html)
+	ctx := context.Background()
+	s := spinner.New(spinner.CharSets[36], 100*time.Millisecond)
+
+	s.Start()
+	res, err := openai.Summarize(ctx, page, lang)
+	s.Stop()
+
 	if err != nil {
 		fmt.Println("Error: summarize text", err)
 		return
 	}
 
-	fmt.Println("Summarized......:\n\n", res)
+	color.Green("---- Summary ----")
+	fmt.Println(res)
+
+	if err = openai.Ask(ctx, page); err != nil {
+		log.Fatal(err)
+	}
 }
